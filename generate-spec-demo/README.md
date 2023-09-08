@@ -1,5 +1,7 @@
 # generate-spec-demo
 
+THIS IS A WORK IN PROGRESS
+
 This folder contains a demo of [go-swagger](https://goswagger.io/). 
 The focus is on generating a swagger spec by running `make spec`.
 
