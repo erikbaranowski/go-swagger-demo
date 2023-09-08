@@ -15,7 +15,7 @@ run command: `go run ./cmd/greeting-server-server`
 
 ## Endpoints
 
-- GET localhost:{PORT}/hello
+- GET localhost:{PORT}/hello?Name={NAME}
 
   Takes in an optional name parameter and returns a greeting
 

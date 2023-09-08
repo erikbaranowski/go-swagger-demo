@@ -1,0 +1,35 @@
+basePath: /
+consumes:
+    - application/json
+host: localhost:23456
+info:
+    description: |-
+        Schemes:
+        http
+    title: Greeting Server
+    version: 1.0.0
+paths:
+    /hello:
+        get:
+            description: GetGreeting get greeting API
+            operationId: getGreeting
+            parameters:
+                - description: defaults to World if not given
+                  in: query
+                  name: Name
+                  type: string
+            responses:
+                "200":
+                    $ref: '#/responses/getGreetingOK'
+produces:
+    - text/plain
+responses:
+    getGreetingOK:
+        description: GetGreetingOK returns a greeting
+        headers:
+            body:
+                description: |-
+                    contains the actual greeting as plain text
+                    In: Body
+                type: string
+swagger: "2.0"

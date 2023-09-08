@@ -1,0 +1,48 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "text/plain"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Schemes:\nhttp",
+    "title": "Greeting Server",
+    "version": "1.0.0"
+  },
+  "host": "localhost:23456",
+  "basePath": "/",
+  "paths": {
+    "/hello": {
+      "get": {
+        "description": "GetGreeting get greeting API",
+        "operationId": "getGreeting",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "defaults to World if not given",
+            "name": "Name",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/getGreetingOK"
+          }
+        }
+      }
+    }
+  },
+  "responses": {
+    "getGreetingOK": {
+      "description": "GetGreetingOK returns a greeting",
+      "headers": {
+        "body": {
+          "type": "string",
+          "description": "contains the actual greeting as plain text\nIn: Body"
+        }
+      }
+    }
+  }
+}

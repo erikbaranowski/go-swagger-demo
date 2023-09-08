@@ -9,7 +9,7 @@ paths:
       produces:
         - text/plain
       parameters:
-        - name: name
+        - name: Name
           required: false
           type: string
           in: query

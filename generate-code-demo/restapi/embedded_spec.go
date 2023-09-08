@@ -34,7 +34,7 @@ func init() {
           {
             "type": "string",
             "description": "defaults to World if not given",
-            "name": "name",
+            "name": "Name",
             "in": "query"
           }
         ],
@@ -68,7 +68,7 @@ func init() {
           {
             "type": "string",
             "description": "defaults to World if not given",
-            "name": "name",
+            "name": "Name",
             "in": "query"
           }
         ],
