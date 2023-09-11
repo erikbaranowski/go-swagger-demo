@@ -19,10 +19,10 @@ import (
 
 // Server lists the calc service endpoint HTTP handlers.
 type Server struct {
-	Mounts             []*MountPoint
-	Multiply           http.Handler
-	CORS               http.Handler
-	GenHTTPOpenapiYaml http.Handler
+	Mounts              []*MountPoint
+	Multiply            http.Handler
+	CORS                http.Handler
+	GenHTTPOpenapi3JSON http.Handler
 }
 
 // MountPoint holds information about the mounted endpoints.
@@ -49,21 +49,21 @@ func New(
 	encoder func(context.Context, http.ResponseWriter) goahttp.Encoder,
 	errhandler func(context.Context, http.ResponseWriter, error),
 	formatter func(ctx context.Context, err error) goahttp.Statuser,
-	fileSystemGenHTTPOpenapiYaml http.FileSystem,
+	fileSystemGenHTTPOpenapi3JSON http.FileSystem,
 ) *Server {
-	if fileSystemGenHTTPOpenapiYaml == nil {
-		fileSystemGenHTTPOpenapiYaml = http.Dir(".")
+	if fileSystemGenHTTPOpenapi3JSON == nil {
+		fileSystemGenHTTPOpenapi3JSON = http.Dir(".")
 	}
 	return &Server{
 		Mounts: []*MountPoint{
 			{"Multiply", "GET", "/multiply/{a}/{b}"},
 			{"CORS", "OPTIONS", "/multiply/{a}/{b}"},
-			{"CORS", "OPTIONS", "/openapi.yaml"},
-			{"./gen/http/openapi.yaml", "GET", "/openapi.yaml"},
+			{"CORS", "OPTIONS", "/openapi.json"},
+			{"./gen/http/openapi3.json", "GET", "/openapi.json"},
 		},
-		Multiply:           NewMultiplyHandler(e.Multiply, mux, decoder, encoder, errhandler, formatter),
-		CORS:               NewCORSHandler(),
-		GenHTTPOpenapiYaml: http.FileServer(fileSystemGenHTTPOpenapiYaml),
+		Multiply:            NewMultiplyHandler(e.Multiply, mux, decoder, encoder, errhandler, formatter),
+		CORS:                NewCORSHandler(),
+		GenHTTPOpenapi3JSON: http.FileServer(fileSystemGenHTTPOpenapi3JSON),
 	}
 }
 
@@ -83,7 +83,7 @@ func (s *Server) MethodNames() []string { return calc.MethodNames[:] }
 func Mount(mux goahttp.Muxer, h *Server) {
 	MountMultiplyHandler(mux, h.Multiply)
 	MountCORSHandler(mux, h.CORS)
-	MountGenHTTPOpenapiYaml(mux, goahttp.Replace("", "/./gen/http/openapi.yaml", h.GenHTTPOpenapiYaml))
+	MountGenHTTPOpenapi3JSON(mux, goahttp.Replace("", "/./gen/http/openapi3.json", h.GenHTTPOpenapi3JSON))
 }
 
 // Mount configures the mux to serve the calc endpoints.
@@ -142,10 +142,10 @@ func NewMultiplyHandler(
 	})
 }
 
-// MountGenHTTPOpenapiYaml configures the mux to serve GET request made to
-// "/openapi.yaml".
-func MountGenHTTPOpenapiYaml(mux goahttp.Muxer, h http.Handler) {
-	mux.Handle("GET", "/openapi.yaml", HandleCalcOrigin(h).ServeHTTP)
+// MountGenHTTPOpenapi3JSON configures the mux to serve GET request made to
+// "/openapi.json".
+func MountGenHTTPOpenapi3JSON(mux goahttp.Muxer, h http.Handler) {
+	mux.Handle("GET", "/openapi.json", HandleCalcOrigin(h).ServeHTTP)
 }
 
 // MountCORSHandler configures the mux to serve the CORS endpoints for the
@@ -153,7 +153,7 @@ func MountGenHTTPOpenapiYaml(mux goahttp.Muxer, h http.Handler) {
 func MountCORSHandler(mux goahttp.Muxer, h http.Handler) {
 	h = HandleCalcOrigin(h)
 	mux.Handle("OPTIONS", "/multiply/{a}/{b}", h.ServeHTTP)
-	mux.Handle("OPTIONS", "/openapi.yaml", h.ServeHTTP)
+	mux.Handle("OPTIONS", "/openapi.json", h.ServeHTTP)
 }
 
 // NewCORSHandler creates a HTTP handler which returns a simple 200 response.

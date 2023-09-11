@@ -5,38 +5,87 @@ import (
 	cors "goa.design/plugins/v3/cors/dsl"
 )
 
+// API describes the global properties of the API server.
 var _ = API("calc", func() {
 	Title("Calculator Service")
-	Description("Service for multiplying numbers, a Goa teaser")
+	Description("HTTP service for multiplying numbers, a goa teaser")
+
+	// Server describes a single process listening for client requests. The DSL
+	// defines the set of services that the server hosts as well as hosts details.
 	Server("calc", func() {
-		Host("localhost", func() {
+		Description("calc hosts the Calculator Service.")
+
+		// List the services hosted by this server.
+		Services("calc")
+
+		// List the Hosts and their transport URLs.
+		Host("development", func() {
+			Description("Development hosts.")
+			// Transport specific URLs, supported schemes are:
+			// 'http', 'https', 'grpc' and 'grpcs' with the respective default
+			// ports: 80, 443, 8080, 8443.
 			URI("http://localhost:8000")
 			URI("grpc://localhost:8080")
+		})
+
+		Host("production", func() {
+			Description("Production hosts.")
+			// URIs can be parameterized using {param} notation.
+			URI("https://{version}.goa.design")
+			URI("grpcs://{version}.goa.design")
+
+			// Variable describes a URI variable.
+			Variable("version", String, "API version", func() {
+				// URL parameters must have a default value and/or an
+				// enum validation.
+				Default("v1")
+			})
 		})
 	})
 })
 
+// Service describes a service
 var _ = Service("calc", func() {
 	cors.Origin("*")
 
-	Description("The calc service performs operations on numbers.")
+	Description("The calc service performs operations on numbers")
 
+	// Method describes a service method (endpoint)
 	Method("multiply", func() {
+		// Payload describes the method payload.
+		// Here the payload is an object that consists of two fields.
 		Payload(func() {
-			Field(1, "a", Int, "Left operand")
+			// Attribute describes an object field
+			Attribute("a", Int, "Left operand", func() {
+				Meta("rpc:tag", "1")
+			})
 			Field(2, "b", Int, "Right operand")
 			Required("a", "b")
 		})
 
+		// Result describes the method result.
+		// Here the result is a simple integer value.
 		Result(Int)
 
+		// HTTP describes the HTTP transport mapping.
 		HTTP(func() {
-			GET("/multiply/{a}/{b}")
+			// Requests to the service consist of HTTP GET requests.
+			// The payload fields are encoded as path parameters.
+			GET("multiply/{a}/{b}")
+			// Responses use a "200 OK" HTTP status.
+			// The result is encoded in the response body.
+			Response(StatusOK)
 		})
 
+		// GRPC describes the gRPC transport mapping.
 		GRPC(func() {
+			// Responses use a "OK" gRPC code.
+			// The result is encoded in the response message.
+			Response(CodeOK)
 		})
 	})
 
-	Files("/openapi.yaml", "./gen/http/openapi.yaml")
+	// Serve the file gen/http/openapi3.json for requests sent to
+	// /openapi.json.
+	Files("/openapi.json", "./gen/http/openapi3.json")
 })

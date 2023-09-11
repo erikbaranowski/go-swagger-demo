@@ -123,7 +123,7 @@ func ParseEndpoint(cc *grpc.ClientConn, opts ...grpc.CallOption) (goa.Endpoint, 
 
 // calcUsage displays the usage of the calc command and its subcommands.
 func calcUsage() {
-	fmt.Fprintf(os.Stderr, `The calc service performs operations on numbers.
+	fmt.Fprintf(os.Stderr, `The calc service performs operations on numbers
 Usage:
     %[1]s [globalflags] calc COMMAND [flags]
 

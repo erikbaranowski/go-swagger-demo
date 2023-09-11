@@ -11,7 +11,7 @@ import (
 	"context"
 )
 
-// The calc service performs operations on numbers.
+// The calc service performs operations on numbers
 type Service interface {
 	// Multiply implements multiply.
 	Multiply(context.Context, *MultiplyPayload) (res int, err error)

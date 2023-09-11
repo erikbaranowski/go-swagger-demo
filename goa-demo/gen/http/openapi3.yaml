@@ -1,10 +1,16 @@
 openapi: 3.0.3
 info:
     title: Calculator Service
-    description: Service for multiplying numbers, a Goa teaser
+    description: HTTP service for multiplying numbers, a goa teaser
     version: "1.0"
 servers:
     - url: http://localhost:8000
+      description: calc hosts the Calculator Service.
+    - url: https://{version}.goa.design
+      description: calc hosts the Calculator Service.
+      variables:
+        version:
+            default: v1
 paths:
     /multiply/{a}/{b}:
         get:
@@ -43,16 +49,16 @@ paths:
                                 example: 8803302123552712831
                                 format: int64
                             example: 1698882017578366363
-    /openapi.yaml:
+    /openapi.json:
         get:
             tags:
                 - calc
-            summary: Download ./gen/http/openapi.yaml
-            operationId: calc#/openapi.yaml
+            summary: Download ./gen/http/openapi3.json
+            operationId: calc#/openapi.json
             responses:
                 "200":
                     description: File downloaded
 components: {}
 tags:
     - name: calc
-      description: The calc service performs operations on numbers.
+      description: The calc service performs operations on numbers
