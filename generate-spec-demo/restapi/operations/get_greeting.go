@@ -18,7 +18,13 @@ GetGreeting get greeting API
 */
 type GetGreeting struct {
 	Context *middleware.Context
-	Handler GetGreetingHandler
+}
+
+// NewGetGreeting creates a new http.Handler for the get greeting operation
+func NewGetGreeting(ctx *middleware.Context) *GetGreeting {
+	return &GetGreeting{
+		Context: ctx,
+	}
 }
 
 func (o *GetGreeting) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
@@ -32,7 +38,7 @@ func (o *GetGreeting) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := o.Handler.Handle(Params) // actually handle the request
+	res := GetGreetingsHandler(Params) // actually handle the request
 	o.Context.Respond(rw, r, route.Produces, route, res)
 }
 
@@ -43,23 +49,5 @@ func GetGreetingsHandler(params GetGreetingParams) middleware.Responder {
 	}
 
 	greeting := fmt.Sprintf("Hello, %s!", name)
-	return NewGetGreetingOK().WithPayload(greeting)
-}
-
-// GetGreetingHandlerFunc turns a function with the right signature into a get greeting handler
-type GetGreetingHandlerFunc func(GetGreetingParams) middleware.Responder
-
-// Handle executing the request and returning a response
-func (fn GetGreetingHandlerFunc) Handle(params GetGreetingParams) middleware.Responder {
-	return fn(params)
-}
-
-// GetGreetingHandler interface for that can handle valid get greeting params
-type GetGreetingHandler interface {
-	Handle(GetGreetingParams) middleware.Responder
-}
-
-// NewGetGreeting creates a new http.Handler for the get greeting operation
-func NewGetGreeting(ctx *middleware.Context, handler GetGreetingHandler) *GetGreeting {
-	return &GetGreeting{Context: ctx, Handler: handler}
+	return &GetGreetingOK{Payload: greeting}
 }

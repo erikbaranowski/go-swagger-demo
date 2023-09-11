@@ -6,10 +6,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/runtime/middleware"
 	"github.com/rs/cors"
-
-	"go-swagger-demo/restapi/operations"
 )
 
 //go:generate swagger generate server --target ../../go-swagger-demo --name GreetingServer --spec ../swagger.yml --principal interface{}
@@ -34,10 +31,6 @@ func configureAPI(api *ServerAPI) http.Handler {
 
 	api.JSONConsumer = runtime.JSONConsumer()
 	api.TxtProducer = runtime.TextProducer()
-
-	api.GetGreetingHandler = operations.GetGreetingHandlerFunc(func(params operations.GetGreetingParams) middleware.Responder {
-		return operations.GetGreetingsHandler(params)
-	})
 
 	api.PreServerShutdown = func() {}
 	api.ServerShutdown = func() {}

@@ -37,10 +37,6 @@ func NewServerAPI(spec *loads.Document) *ServerAPI {
 		JSONConsumer: runtime.JSONConsumer(),
 
 		TxtProducer: runtime.TextProducer(),
-
-		GetGreetingHandler: operations.GetGreetingHandlerFunc(func(params operations.GetGreetingParams) middleware.Responder {
-			return operations.GetGreetingsHandler(params)
-		}),
 	}
 }
 
@@ -76,9 +72,6 @@ type ServerAPI struct {
 	// TxtProducer registers a producer for the following mime types:
 	//   - text/plain
 	TxtProducer runtime.Producer
-
-	// GetGreetingHandler sets the operation handler for the get greeting operation
-	GetGreetingHandler operations.GetGreetingHandler
 
 	// ServeError is called when an error is received, there is a default handler
 	// but you can set your own with this
@@ -154,10 +147,6 @@ func (o *ServerAPI) Validate() error {
 
 	if o.TxtProducer == nil {
 		unregistered = append(unregistered, "TxtProducer")
-	}
-
-	if o.GetGreetingHandler == nil {
-		unregistered = append(unregistered, "GetGreetingHandler")
 	}
 
 	if len(unregistered) > 0 {
@@ -250,7 +239,7 @@ func (o *ServerAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/hello"] = operations.NewGetGreeting(o.context, o.GetGreetingHandler)
+	o.handlers["GET"]["/hello"] = operations.NewGetGreeting(o.context)
 }
 
 // Serve creates a http handler to serve the API over HTTP

@@ -13,7 +13,6 @@ import (
 //
 // There are no default values defined in the spec.
 func NewGetGreetingParams() GetGreetingParams {
-
 	return GetGreetingParams{}
 }
 
